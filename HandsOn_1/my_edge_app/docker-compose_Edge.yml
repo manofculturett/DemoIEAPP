@@ -23,7 +23,7 @@ services:
 
 ##### INFLUXDB ######
   influxdb:
-    image: influxdb:2.4-alpine          # Define image to pull from docker hub if not already on your machine available
+    image: influxdb:latest        # Define image to pull from docker hub if not already on your machine available
     container_name: influxdb            # Name of the influx-db container
     restart: unless-stopped             # always restarts (see overview page 12 Industrial Edge Developer Guide)  
     mem_limit: 1400m
@@ -46,6 +46,27 @@ services:
       - "38086:8086"                     # map containers port 8086 to host's port 38086
     networks:                           # define networks connected to container 'influxdb' 
       proxy-redirect:                   # Name of the network
+      ##### GRAFANA ######
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    mem_limit: 512m
+    ports:
+      - "33000:3000"
+    networks:
+      - proxy-redirect
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
+
 
 ###### NETWORK CONFIG ######
 networks:                           # Network interface configuration
@@ -57,3 +78,4 @@ networks:                           # Network interface configuration
 ###### VOLUMES ######
 volumes:                            # Volumes for containers
   db-backup:
+  grafana-storage:

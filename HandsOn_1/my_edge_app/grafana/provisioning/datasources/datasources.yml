@@ -1,0 +1,13 @@
+apiVersion: 1
+datasources:
+  - name: InfluxDB_main
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    isDefault: true
+    jsonData:
+      version: Flux  
+      organization: "siemens"  
+      bucket: "edgedb"  
+    secureJsonData:
+      token: "testtoken"  
