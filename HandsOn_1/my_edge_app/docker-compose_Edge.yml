@@ -46,7 +46,7 @@ services:
       - "38086:8086"                     # map containers port 8086 to host's port 38086
     networks:                           # define networks connected to container 'influxdb' 
       proxy-redirect:                   # Name of the network
-      ##### GRAFANA ######
+     ##### GRAFANA ######
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -59,13 +59,18 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file
     depends_on:
       - influxdb
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
 
 ###### NETWORK CONFIG ######

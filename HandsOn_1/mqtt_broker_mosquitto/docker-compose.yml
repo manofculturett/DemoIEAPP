@@ -2,7 +2,7 @@
 # This docker-compose file creates a preconfigured MQTT Broker container without authentication
 
 
-version: '2.4'                                # docker-compose version is set to 2.4 
+# version: '2.4'                                # docker-compose version is set to 2.4 
 
 services:
 
