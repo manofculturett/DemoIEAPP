@@ -1,3 +1,4 @@
-paho-mqtt==1.5.0
-numpy==1.19.5
-scikit-learn==0.24.2
+pip
+paho-mqtt
+numpy
+scikit-learn
