@@ -2,3 +2,4 @@ pip
 paho-mqtt
 numpy
 scikit-learn
+torch

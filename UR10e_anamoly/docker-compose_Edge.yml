@@ -1,0 +1,86 @@
+### Docker Compose File for my Industrial Edge App ###
+# This docker-compose file creates a preconfigured 
+# * Data Analytics container based in Python with Mqtt Connection
+# * InfluxDB Container for Storage of Time Series data adn visualization
+
+version: '2.4' # docker-compose version is set to 2.4 
+
+services:
+
+###### DATA-ANALYTICS ######
+  data-analytics:
+    image: data-analytics:v0.0.3        # Name of the built image
+    container_name: data-analytics      # Name of the data-analytics container
+    mem_limit: 4500m                      # Memory limit for container
+    restart: unless-stopped             # always restarts (see overview page 12 Industrial Edge Developer Guide)
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file  
+    networks:                           # define networks connected to container 'data-analytics' 
+      proxy-redirect:                   # Name of the network
+
+##### INFLUXDB ######
+  influxdb:
+    image: influxdb:latest        # Define image to pull from docker hub if not already on your machine available
+    container_name: influxdb            # Name of the influx-db container
+    restart: unless-stopped             # always restarts (see overview page 12 Industrial Edge Developer Guide)  
+    mem_limit: 800m
+    environment:                        # Environment variables available at container run-time
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=edge
+      - DOCKER_INFLUXDB_INIT_PASSWORD=edgeadmin
+      - DOCKER_INFLUXDB_INIT_ORG=CTC
+      - DOCKER_INFLUXDB_INIT_BUCKET=UR10e
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=testtoken
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file
+    volumes:                            # mount volume from host
+      - db-backup:/var/lib/influxdb     # mount named volume 'db-backup' to host's path to /var/lib/influxdb
+    ports:                              # expose of ports and publish
+      - "38086:8086"                     # map containers port 8086 to host's port 38086
+    networks:                           # define networks connected to container 'influxdb' 
+      proxy-redirect:                   # Name of the network
+     ##### GRAFANA ######
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    mem_limit: 512m
+    ports:
+      - "33000:3000"
+    networks:
+      - proxy-redirect
+    environment:
+      - GF_SECURITY_ADMIN_USER=edge
+      - GF_SECURITY_ADMIN_PASSWORD=edge
+    logging:                            # allow logging
+      options:                          # we use best pactice here as limiting file size and rolling mechanism
+        max-size: "10m"                 # File size is 10MB
+        max-file: "2"                   # only 2 files created before rolling mechanism applies
+      driver: json-file
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+
+###### NETWORK CONFIG ######
+networks:                           # Network interface configuration
+  proxy-redirect:                   # Reference 'proxy-redirect' as predefined network
+    external:                       # Note: Already preexisting on Industrial Edge Device
+      name: proxy-redirect
+    driver: bridge
+
+###### VOLUMES ######
+volumes:                            # Volumes for containers
+  db-backup:
+  grafana-storage:

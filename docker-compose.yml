@@ -14,8 +14,8 @@ services:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=edge
       - DOCKER_INFLUXDB_INIT_PASSWORD=edgeadmin
-      - DOCKER_INFLUXDB_INIT_ORG=siemens
-      - DOCKER_INFLUXDB_INIT_BUCKET=Main_PLC
+      - DOCKER_INFLUXDB_INIT_ORG=CTC
+      - DOCKER_INFLUXDB_INIT_BUCKET=UR10e
       - DOCKER_INFLUXDB_INIT_RETENTION=1w
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=testtoken
     logging:
@@ -36,8 +36,8 @@ services:
     depends_on:
       - influxdb
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ADMIN_USER=edge
+      - GF_SECURITY_ADMIN_PASSWORD=edge
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_USERS_ALLOW_ORG_CREATE=false
     volumes:
