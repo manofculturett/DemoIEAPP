@@ -1,6 +1,6 @@
 # Anomaly Detection Container for Siemens Industrial Edge
 
-This repository contains the code and resources for an anomaly detection container designed specifically for Siemens Industrial Edge. The container utilizes advanced machine learning algorithms (Isolation Forest) to detect anomalies in industrial processes, helping to identify potential issues and improve overall system performance.
+![Anomaly Detection Icon](image.webp)
 
 ## Features
 
